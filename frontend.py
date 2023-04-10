@@ -1,5 +1,8 @@
 import tkinter as tk
 import mysql.connector
+import time
+import datetime
+ 
 
 pw=input('Enter password to database')
 
@@ -28,6 +31,9 @@ class User:
 
         delete_user_button = tk.Button(root, text="Delete existing user", command=self.delete_user_driver)
         delete_user_button.pack()
+
+        issue_book_button = tk.Button(root, text="Issue a book", command=self.issue_book_driver)
+        issue_book_button.pack()
 
         root.mainloop()
 
@@ -166,6 +172,69 @@ class User:
         # Start the main event loop
         window.mainloop()
 
+
+    def issue_book(self):
+        issueDate = datetime.datetime.now()
+        print("current time:-", issueDate)
+        
+        # ts store timestamp of current time
+        ts = issueDate.timestamp()
+        print("timestamp:-", ts)
+
+        due_ts=int(ts)+8,64,000
+        # dueDate=datetime.fromtimestamp(due_ts)
+
+        returnDate='.'
+
+        # Get the user's information from the input boxes
+        userID=self.issue_userID_box.get()
+        ISBN=self.issue_ISBN.get()
+        circulationID=userID+ISBN+str(issueDate)
+
+        # query1 = f"INSERT INTO userInfo (userID,firstname, middlename, lastname, city, street, postalCode) VALUES ('{userID}','{firstname}', '{middlename}', '{lastname}', '{city}', '{street}', '{postalCode}')"
+
+        query1=f"INSERT INTO circulationrecord (circulationID,userID,ISBN,dueDate,returnDate) VALUES ('{circulationID}','{userID}','{ISBN}','{due_ts}','{returnDate}')"
+        self.cursor.execute(query1)
+
+        query2 = f"INSERT INTO issues(userID,ISBN,issueDate) VALUES ('{userID}','{ISBN}','{issueDate}')"
+        self.cursor.execute(query2)
+
+        
+        conn.commit()
+
+        # Display a message to the user
+        self.message_label.config(text="Book issued!")
+
+        # Clear the input boxes
+        self.issue_userID_box.delete(0, tk.END)
+        self.issue_ISBN.delete(0, tk.END)
+
+    def issue_book_driver(self):
+        # Create the main window
+        window = tk.Tk()
+        window.title("SQL Project Frontend")
+
+        # Create input boxes for adding a new user
+        issue_userID_label = tk.Label(window, text="UserID:")
+        issue_userID_label.pack()
+        self.issue_userID_box = tk.Entry(window)
+        self.issue_userID_box.pack()
+
+        issue_ISBN_label = tk.Label(window, text="ISBN:")
+        issue_ISBN_label.pack()
+        self.issue_ISBN = tk.Entry(window)
+        self.issue_ISBN.pack()
+
+        # Create the button to add a new user
+        add_button = tk.Button(window, text="Issue book", command=self.issue_book)
+        add_button.pack()
+
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
 
 
 user=User()
@@ -325,4 +394,5 @@ book.dashboard()
 
 # Close the connection to the MySQL database
 conn.close()
+# 9780061120084
 
