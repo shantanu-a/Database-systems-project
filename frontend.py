@@ -1,11 +1,13 @@
 import tkinter as tk
 import mysql.connector
 
+pw=input('Enter password to database')
+
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
     host="localhost",
     user="root",
-    password="Sidshan2003!!",
+    password=pw,
     database="library"
 )
 
