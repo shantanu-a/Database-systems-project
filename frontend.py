@@ -35,17 +35,22 @@ class User:
     # Create a function to add a new user to the database
     def add_user(self):
         # Get the user's information from the input boxes
-        userID=self.userID_box.get()
         firstname = self.firstname_box.get()
         middlename = self.middlename_box.get()
         lastname = self.lastname_box.get()
         city = self.city_box.get()
         street = self.street_box.get()
         postalCode = self.postalCode_box.get()
+        userID=self.userID_box.get()
+        contact=self.contact_box.get()
+        phoneID=contact+userID
 
         # Execute the SQL query to insert the new user into the database
-        query = f"INSERT INTO userInfo (userID,firstname, middlename, lastname, city, street, postalCode) VALUES ('{userID}','{firstname}', '{middlename}', '{lastname}', '{city}', '{street}', '{postalCode}')"
-        self.cursor.execute(query)
+        query1 = f"INSERT INTO userInfo (userID,firstname, middlename, lastname, city, street, postalCode) VALUES ('{userID}','{firstname}', '{middlename}', '{lastname}', '{city}', '{street}', '{postalCode}')"
+        self.cursor.execute(query1)
+
+        query2=f"INSERT INTO usercontact(phoneID,userID,phoneNum) VALUES ('{phoneID}','{userID}','{contact}')"
+        self.cursor.execute(query2)
         conn.commit()
 
         # Clear the input boxes
@@ -56,6 +61,7 @@ class User:
         self.city_box.delete(0, tk.END)
         self.street_box.delete(0, tk.END)
         self.postalCode_box.delete(0, tk.END)
+        self.contact_box.delete(0, tk.END)
 
         # Display a message to the user
         self.message_label.config(text="User added successfully!")
@@ -67,11 +73,6 @@ class User:
         window.title("SQL Project Frontend")
 
         # Create input boxes for adding a new user
-        userID_label = tk.Label(window, text="UserID:")
-        userID_label.pack()
-        self.userID_box = tk.Entry(window)
-        self.userID_box.pack()
-
         firstname_label = tk.Label(window, text="First Name:")
         firstname_label.pack()
         self.firstname_box = tk.Entry(window)
@@ -102,6 +103,16 @@ class User:
         self.postalCode_box = tk.Entry(window)
         self.postalCode_box.pack()
 
+        contact_label = tk.Label(window, text="Phone number:")
+        contact_label.pack()
+        self.contact_box = tk.Entry(window)
+        self.contact_box.pack()
+
+        userID_label = tk.Label(window, text="Password:")
+        userID_label.pack()
+        self.userID_box = tk.Entry(window)
+        self.userID_box.pack()
+
         # Create the button to add a new user
         add_button = tk.Button(window, text="Add User", command=self.add_user)
         add_button.pack()
@@ -117,9 +128,13 @@ class User:
         # Get the user's information from the input boxes
         userID=self.delete_userID_box.get()
 
-        # Execute the SQL query to insert the new user into the database
-        query = f"DELETE FROM userinfo where userID='{userID}'"
-        self.cursor.execute(query)
+        query1=f"DELETE FROM usercontact where userID='{userID}'"
+        self.cursor.execute(query1)
+
+        query2 = f"DELETE FROM userinfo where userID='{userID}'"
+        self.cursor.execute(query2)
+
+        
         conn.commit()
 
         # Display a message to the user
