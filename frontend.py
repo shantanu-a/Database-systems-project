@@ -12,120 +12,147 @@ conn = mysql.connector.connect(
 # Create a cursor object to execute SQL queries
 cursor = conn.cursor()
 
-# Create a function to execute the SQL query and display the results in a listbox
-def execute_query():
-    # Get the SQL query from the input box
-    query = input_box.get()
-
-    # Execute the SQL query
-    cursor.execute(query)
-
-    # Get the results of the query
-    results = cursor.fetchall()
-
-    # Clear the listbox
-    result_listbox.delete(0, tk.END)
-
-    # Display the results in the listbox
-    for row in results:
-        result_listbox.insert(tk.END, row)
-
-class Dashboard:
+class User:
 
     def __init__(self) -> None:
+        # Create a cursor object to execute SQL queries
+        self.cursor = conn.cursor()
+
+
+    def dashboard(self):
+        root = tk.Tk()
+        add_user_button = tk.Button(root, text="Add new user", command=self.add_user_driver)
+        add_user_button.pack()
+
+        delete_user_button = tk.Button(root, text="Delete existing user", command=self.delete_user_driver)
+        delete_user_button.pack()
+
+        root.mainloop()
+
+
+    # Create a function to add a new user to the database
+    def add_user(self):
+        # Get the user's information from the input boxes
+        userID=self.userID_box.get()
+        firstname = self.firstname_box.get()
+        middlename = self.middlename_box.get()
+        lastname = self.lastname_box.get()
+        city = self.city_box.get()
+        street = self.street_box.get()
+        postalCode = self.postalCode_box.get()
+
+        # Execute the SQL query to insert the new user into the database
+        query = f"INSERT INTO userInfo (userID,firstname, middlename, lastname, city, street, postalCode) VALUES ('{userID}','{firstname}', '{middlename}', '{lastname}', '{city}', '{street}', '{postalCode}')"
+        self.cursor.execute(query)
+        conn.commit()
+
+        # Clear the input boxes
+        self.userID_box.delete(0, tk.END)
+        self.firstname_box.delete(0, tk.END)
+        self.middlename_box.delete(0, tk.END)
+        self.lastname_box.delete(0, tk.END)
+        self.city_box.delete(0, tk.END)
+        self.street_box.delete(0, tk.END)
+        self.postalCode_box.delete(0, tk.END)
+
+        # Display a message to the user
+        self.message_label.config(text="User added successfully!")
+
+    def add_user_driver(self):
+        
+        # Create the main window
         window = tk.Tk()
         window.title("SQL Project Frontend")
 
-# Create a function to add a new user to the database
-def add_user():
-    # Get the user's information from the input boxes
-    userID=userID_box.get()
-    firstname = firstname_box.get()
-    middlename = middlename_box.get()
-    lastname = lastname_box.get()
-    city = city_box.get()
-    street = street_box.get()
-    postalCode = postalCode_box.get()
+        # Create input boxes for adding a new user
+        userID_label = tk.Label(window, text="UserID:")
+        userID_label.pack()
+        self.userID_box = tk.Entry(window)
+        self.userID_box.pack()
 
-    # Execute the SQL query to insert the new user into the database
-    query = f"INSERT INTO userInfo (userID,firstname, middlename, lastname, city, street, postalCode) VALUES ('{userID}','{firstname}', '{middlename}', '{lastname}', '{city}', '{street}', '{postalCode}')"
-    cursor.execute(query)
-    conn.commit()
+        firstname_label = tk.Label(window, text="First Name:")
+        firstname_label.pack()
+        self.firstname_box = tk.Entry(window)
+        self.firstname_box.pack()
 
-    # Clear the input boxes
-    userID_box.delete(0, tk.END)
-    firstname_box.delete(0, tk.END)
-    middlename_box.delete(0, tk.END)
-    lastname_box.delete(0, tk.END)
-    city_box.delete(0, tk.END)
-    street_box.delete(0, tk.END)
-    postalCode_box.delete(0, tk.END)
+        middlename_label = tk.Label(window, text="Middle Name:")
+        middlename_label.pack()
+        self.middlename_box = tk.Entry(window)
+        self.middlename_box.pack()
 
-    # Display a message to the user
-    message_label.config(text="User added successfully!")
+        lastname_label = tk.Label(window, text="Last Name:")
+        lastname_label.pack()
+        self.lastname_box = tk.Entry(window)
+        self.lastname_box.pack()
 
-# Create the main window
-window = tk.Tk()
-window.title("SQL Project Frontend")
+        city_label = tk.Label(window, text="City:")
+        city_label.pack()
+        self.city_box = tk.Entry(window)
+        self.city_box.pack()
 
-# Create the input box for the SQL query
-input_box = tk.Entry(window)
-input_box.pack()
+        street_label = tk.Label(window, text="Street:")
+        street_label.pack()
+        self.street_box = tk.Entry(window)
+        self.street_box.pack()
 
-# Create the button to execute the SQL query
-execute_button = tk.Button(window, text="Execute", command=execute_query)
-execute_button.pack()
+        postalCode_label = tk.Label(window, text="Postal Code:")
+        postalCode_label.pack()
+        self.postalCode_box = tk.Entry(window)
+        self.postalCode_box.pack()
 
-# Create input boxes for adding a new user
-userID_label = tk.Label(window, text="UserID:")
-userID_label.pack()
-userID_box = tk.Entry(window)
-userID_box.pack()
+        # Create the button to add a new user
+        add_button = tk.Button(window, text="Add User", command=self.add_user)
+        add_button.pack()
 
-firstname_label = tk.Label(window, text="First Name:")
-firstname_label.pack()
-firstname_box = tk.Entry(window)
-firstname_box.pack()
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
 
-middlename_label = tk.Label(window, text="Middle Name:")
-middlename_label.pack()
-middlename_box = tk.Entry(window)
-middlename_box.pack()
+        # Start the main event loop
+        window.mainloop()
 
-lastname_label = tk.Label(window, text="Last Name:")
-lastname_label.pack()
-lastname_box = tk.Entry(window)
-lastname_box.pack()
+    def delete_user(self):
+        # Get the user's information from the input boxes
+        userID=self.delete_userID_box.get()
 
-city_label = tk.Label(window, text="City:")
-city_label.pack()
-city_box = tk.Entry(window)
-city_box.pack()
+        # Execute the SQL query to insert the new user into the database
+        query = f"DELETE FROM userinfo where userID='{userID}'"
+        self.cursor.execute(query)
+        conn.commit()
 
-street_label = tk.Label(window, text="Street:")
-street_label.pack()
-street_box = tk.Entry(window)
-street_box.pack()
+        # Display a message to the user
+        self.message_label.config(text="User deleted successfully!")
 
-postalCode_label = tk.Label(window, text="Postal Code:")
-postalCode_label.pack()
-postalCode_box = tk.Entry(window)
-postalCode_box.pack()
+        # Clear the input boxes
+        self.delete_userID_box.delete(0, tk.END)
 
-# Create the button to add a new user
-add_button = tk.Button(window, text="Add User", command=add_user)
-add_button.pack()
 
-# Create a label to display messages to the user
-message_label = tk.Label(window, text="")
-message_label.pack()
+    def delete_user_driver(self):
+        # Create the main window
+        window = tk.Tk()
+        window.title("SQL Project Frontend")
 
-# Create the listbox to display the results
-result_listbox = tk.Listbox(window)
-result_listbox.pack()
+        # Create input boxes for adding a new user
+        userID_label = tk.Label(window, text="UserID:")
+        userID_label.pack()
+        self.delete_userID_box = tk.Entry(window)
+        self.delete_userID_box.pack()
 
-# Start the main event loop
-window.mainloop()
+        # Create the button to add a new user
+        add_button = tk.Button(window, text="Delete User", command=self.delete_user)
+        add_button.pack()
 
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
+
+
+user=User()
+user.dashboard()
 # Close the connection to the MySQL database
 conn.close()
+
