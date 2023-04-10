@@ -170,6 +170,159 @@ class User:
 
 user=User()
 user.dashboard()
+
+
+
+class Book:
+
+    def __init__(self) -> None:
+        # Create a cursor object to execute SQL queries
+        self.cursor = conn.cursor()
+
+
+    def dashboard(self):
+        root = tk.Tk()
+        add_book_button = tk.Button(root, text="Add new book", command=self.add_book_driver)
+        add_book_button.pack()
+
+        delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
+        delete_book_button.pack()
+
+        root.mainloop()
+
+
+    # Create a function to add a new book to the database
+    def add_book(self):
+        # Get the book's information from the input boxes
+        ISBN = self.ISBN_box.get()
+        title = self.title_box.get()
+        publisher = self.publisher_box.get()
+        authorFirstName = self.authorFirstName_box.get()
+        authorMiddletName = self.authorMiddleName_box.get()
+        authorLasttName = self.authorLastName_box.get()
+        numCopy = self.numCopy_box.get()
+
+        # Execute the SQL query to insert the new user into the database
+        query1 = f"INSERT INTO bookInfo (ISBN, title, pusblisher, numCopy) VALUES ('{ISBN}','{title}', '{publisher}', '{numCopy}')"
+        self.cursor.execute(query1)
+
+        query2=f"INSERT INTO bookAuthor(ISBN, authorFirstName, authorMiddletName, authorLastName) VALUES ('{ISBN}', '{authorFirstName}', '{authorMiddletName}', '{authorLasttName}')"
+        self.cursor.execute(query2)
+        conn.commit()
+
+        # Clear the input boxes
+        self.ISBN_box.delete(0, tk.END)
+        self.title_box.delete(0, tk.END)
+        self.publisher_box.delete(0, tk.END)
+        self.numCopy_box.delete(0, tk.END)
+        self.authorFirstName.delete(0, tk.END)
+        self.authorMiddletName.delete(0, tk.END)
+        self.authorLastName.delete(0, tk.END)
+
+        # Display a message to the user
+        self.message_label.config(text="Book added successfully!")
+        
+    def add_book_driver(self):
+        
+        # Create the main window
+        window = tk.Tk()
+        window.title("SQL Project Frontend")
+
+        # Create input boxes for adding a new user
+        ISBN_label = tk.Label(window, text="ISBN:")
+        ISBN_label.pack()
+        self.ISBN_box = tk.Entry(window)
+        self.ISBN_box.pack()
+
+        title_label = tk.Label(window, text="Title:")
+        title_label.pack()
+        self.title_box = tk.Entry(window)
+        self.title_box.pack()
+
+        publisher_label = tk.Label(window, text="Publisher:")
+        publisher_label.pack()
+        self.publisher_box = tk.Entry(window)
+        self.publisher_box.pack()
+
+        numCopy_label = tk.Label(window, text="Number of copies:")
+        numCopy_label.pack()
+        self.numCopy_box = tk.Entry(window)
+        self.numCopy_box.pack()
+
+        authorFirstName_label = tk.Label(window, text="Author's first name:")
+        authorFirstName_label.pack()
+        self.authorFirstName_box = tk.Entry(window)
+        self.authorFirstName_box.pack()
+
+        authorMiddleName_label = tk.Label(window, text="Author's middle name:")
+        authorMiddleName_label.pack()
+        self.authorMiddleName_box = tk.Entry(window)
+        self.authorMiddleName_box.pack()
+
+        authorLasteName_label = tk.Label(window, text="Author's last name:")
+        authorLasteName_label.pack()
+        self.authorLasteName_box = tk.Entry(window)
+        self.authorLasteName_box.pack()
+
+        # Create the button to add a new user
+        add_button = tk.Button(window, text="Add Book", command=self.add_book)
+        add_button.pack()
+
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
+    def delete_book(self):
+        # Get the user's information from the input boxes
+        ISBN=self.delete_ISBN_box.get()
+
+        query1=f"DELETE FROM bookInfo where ISBN='{ISBN}'"
+        self.cursor.execute(query1)
+
+        query2 = f"DELETE FROM bookAuthor where ISBN='{ISBN}'"
+        self.cursor.execute(query2)
+
+        
+        conn.commit()
+
+        # Display a message to the user
+        self.message_label.config(text="Book deleted successfully!")
+
+        # Clear the input boxes
+        self.delete_ISBN_box.delete(0, tk.END)
+
+
+    def delete_book_driver(self):
+        # Create the main window
+        window = tk.Tk()
+        window.title("SQL Project Frontend")
+
+        # Create input boxes for adding a new user
+        ISBN_label = tk.Label(window, text="ISBN:")
+        ISBN_label.pack()
+        self.delete_ISBN_box = tk.Entry(window)
+        self.delete_ISBN_box.pack()
+
+        # Create the button to add a new user
+        add_button = tk.Button(window, text="Delete Book", command=self.delete_book)
+        add_button.pack()
+
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
+
+
+book=Book()
+book.dashboard()
+
+
 # Close the connection to the MySQL database
 conn.close()
 
