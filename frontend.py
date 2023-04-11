@@ -46,8 +46,11 @@ class Library:
         delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
         delete_book_button.pack()
 
-        show_fine_button = tk.Button(root, text="Show fine", command=self.show_fine_driver)
+        show_fine_button = tk.Button(root, text="User fine", command=self.show_fine_driver)
         show_fine_button.pack()
+
+        show_fine_by_all_button = tk.Button(root, text="Total fine paid", command=self.show_fine_by_all_driver)
+        show_fine_by_all_button.pack()
 
         root.mainloop()
 
@@ -189,11 +192,9 @@ class Library:
 
     def issue_book(self):
         issueDate = datetime.datetime.now()
-        print("current time:-", issueDate)
         
         # ts store timestamp of current time
         ts = issueDate.timestamp()
-        print("timestamp:-", ts)
 
         due_ts=int(ts)-864000
         # dueDate=datetime.fromtimestamp(due_ts)
@@ -262,8 +263,6 @@ class Library:
         self.cursor.execute(f"SELECT dueDate FROM circulationrecord WHERE circulationID='{circulationID}'")
         dueDate=self.cursor.fetchone()
 
-        print(dueDate[0])
-        print(ts)
         if(dueDate[0]<ts):
             fineID=str(dueDate[0])+str(userID)
             self.cursor.execute(f"INSERT INTO finerecord (fineID,userID,reason,ISBN,amount) VALUES ('{fineID}','{userID}','{'late'}','{ISBN}','{'100'}')")
@@ -341,6 +340,22 @@ class Library:
         # Create a label to display messages to the user
         self.message_label = tk.Label(window, text="")
         self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
+
+    def show_fine_by_all_driver(self):
+        query1=f"SELECT SUM(AMOUNT) FROM finerecord"
+        self.cursor.execute(query1)
+
+        fine_amount=self.cursor.fetchone()
+
+        window=tk.Tk()
+        window.title('Show fine')
+
+        userID_label = tk.Label(window, text=f"Fine paid by all users is: {fine_amount[0]}")
+        userID_label.pack()
 
         # Start the main event loop
         window.mainloop()
