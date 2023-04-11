@@ -346,49 +346,6 @@ class Library:
         window.mainloop()
 
 
-
-
-
-
-    def user_fine_total(self):
-
-        cursor.execute(f"SELECT fine FROM fineRecord WHERE user_id='{self.user_id}'")
-        result = cursor.fetchone()
-        if result:
-            total_fine = result[0]
-        else:
-            total_fine = 0
-
-        return total_fine
-    
-    def user_fine_total_driver(self):
-        # create a new tkinter window
-        window = tk.Tk()
-        window.title("Library Fine Checker")
-        
-        # create a label and entry box for the user ID
-        userID_label = tk.Label(window, text="Password:")
-        userID_label.pack()
-        userID_entry = tk.Entry(window)
-        userID_entry.pack()
-        
-        # set the default user ID to the ID of this user object
-        userID_entry.insert(0, self.userID)
-        
-        # create a button to check the user's fine
-        def check_fine():
-            userID = userID_entry.get()
-            user = User(userID)
-            total_fine = user.user_fine_total()
-            # display the user's fine in a message box
-            tk.messagebox.showinfo("User Fine Total", f"Total Fine: {total_fine}")
-        check_fine_button = tk.Button(window, text="Check Fine", command=check_fine)
-        check_fine_button.pack()
-        
-        # start the tkinter event loop
-        window.mainloop()
-
-
     # Create a function to add a new book to the database
     def add_book(self):
         # Get the book's information from the input boxes
