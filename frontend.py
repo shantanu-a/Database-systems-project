@@ -224,15 +224,15 @@ class Library:
         ISBN=self.issue_ISBN.get()
         circulationID=userID+ISBN
 
-        # query1 = f"INSERT INTO userInfo (userID,firstname, middlename, lastname, city, street, postalCode) VALUES ('{userID}','{firstname}', '{middlename}', '{lastname}', '{city}', '{street}', '{postalCode}')"
 
-        query1=f"INSERT INTO circulationrecord (circulationID,userID,ISBN,dueDate,returnDate) VALUES ('{circulationID}','{userID}','{ISBN}','{due_ts}','{returnDate}')"
+        query1=f"INSERT INTO circulationrecord (circulationID,userID,ISBN,dueDate,issueDate) VALUES ('{circulationID}','{userID}','{ISBN}','{due_ts}','{ts}')"
         self.cursor.execute(query1)
 
-        # query2 = f"INSERT INTO issues(userID,ISBN,issueDate) VALUES ('{userID}','{ISBN}','{issueDate}')"
-        # self.cursor.execute(query2)
+        query2 = f"INSERT INTO issues(userID,ISBN,issueDate,returnDate) VALUES ('{userID}','{ISBN}','{ts}','{0}')"
+        self.cursor.execute(query2)
 
-        
+        query3=f"UPDATE bookinfo set numCopy=numCopy-1 where ISBN='{ISBN}'"
+
         conn.commit()
 
         # Display a message to the user
@@ -281,11 +281,13 @@ class Library:
         self.cursor.execute(f"SELECT dueDate FROM circulationrecord WHERE circulationID='{circulationID}'")
         dueDate=self.cursor.fetchone()
 
-        if(dueDate[0]<ts):
+        if(int(dueDate[0])<ts):
             fineID=str(dueDate[0])+str(userID)
             self.cursor.execute(f"INSERT INTO finerecord (fineID,userID,reason,ISBN,amount) VALUES ('{fineID}','{userID}','{'late'}','{ISBN}','{'100'}')")
+            self.cursor.execute(f"UPDATE issues set returnDate={ts} where ISBN='{ISBN}'and userID='{userID}'and returnDate='0'")
             self.message_label.config(text="Late! Fine issued.")
 
+        self.cursor.execute(f"UPDATE issues set returnDate={ts} where ISBN='{ISBN}'and userID='{userID}'and returnDate='0'")
         query2=f"DELETE FROM circulationrecord WHERE circulationID='{circulationID}' "
         self.cursor.execute(query2)
 
@@ -598,13 +600,12 @@ class Library:
 
         dueDate=self.cursor.fetchone()
 
-        new_date=dueDate[0]+864000
-        print(new_date)
 
-        if(dueDate[0]<ts):
+        if(int(dueDate[0])<ts):
             self.message_label.config(text='Cannot renew, book overdue. Fined')
             return
-
+        
+        new_date=int(dueDate[0])+864000
         query1 = f"UPDATE circulationrecord set dueDate={new_date} where ISBN='{ISBN}'"
         self.cursor.execute(query1)
   
