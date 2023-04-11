@@ -1,0 +1,6 @@
+import datetime
+
+currentDate = datetime.datetime.now() 
+# ts store timestamp of current time
+ts = currentDate.timestamp()
+print(ts)

@@ -58,6 +58,8 @@ class Library:
         checked_out_books_button = tk.Button(root, text="List of checked out books", command=self.checked_out_books_driver)
         checked_out_books_button.pack()
 
+        overdue_button = tk.Button(root, text="Overdue items", command=self.overdue_items_driver)
+        overdue_button.pack()
         
 
         root.mainloop()
@@ -546,6 +548,32 @@ class Library:
         for book in self.cursor: 
             for j in range(len(book)):
                 e = Entry(window, width=100, fg='blue') 
+                e.grid(row=i, column=j) 
+                e.insert(END, book[j])
+            i=i+1
+
+        # Start the main event loop
+        window.mainloop()
+
+    def overdue_items_driver(self):
+        window=tk.Tk()
+        window.title('Overdue books')
+        
+        currentDate = datetime.datetime.now() 
+        # ts store timestamp of current time
+        ts = currentDate.timestamp()
+
+        self.cursor.execute(f"SELECT firstName,middleName,lastName,title FROM bookinfo,circulationrecord,userinfo where circulationrecord.dueDate<{ts} AND userinfo.userID=circulationrecord.userID AND bookinfo.ISBN=circulationrecord.ISBN")
+
+        # self.message_label = tk.Label(window, text="")
+        # self.message_label.pack()
+
+        # self.message_label.config(text="The names of overdue users and corresponding books are:")
+
+        i=0
+        for book in self.cursor: 
+            for j in range(len(book)):
+                e = Entry(window, width=20, fg='blue') 
                 e.grid(row=i, column=j) 
                 e.insert(END, book[j])
             i=i+1
