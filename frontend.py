@@ -35,6 +35,9 @@ class Library:
         issue_book_button = tk.Button(root, text="Issue a book", command=self.issue_book_driver)
         issue_book_button.pack()
 
+        return_book_button = tk.Button(root, text="Return a book", command=self.return_book_driver)
+        return_book_button.pack()
+
         add_book_button = tk.Button(root, text="Add new book", command=self.add_book_driver)
         add_book_button.pack()
 
@@ -42,6 +45,7 @@ class Library:
         delete_book_button.pack()
 
         root.mainloop()
+        9780547249649
 
 
     # Create a function to add a new user to the database
@@ -187,7 +191,7 @@ class Library:
         ts = issueDate.timestamp()
         print("timestamp:-", ts)
 
-        due_ts=int(ts)+8,64,000
+        due_ts=int(ts)+864000
         # dueDate=datetime.fromtimestamp(due_ts)
 
         returnDate='.'
@@ -195,7 +199,7 @@ class Library:
         # Get the user's information from the input boxes
         userID=self.issue_userID_box.get()
         ISBN=self.issue_ISBN.get()
-        circulationID=userID+ISBN+str(issueDate)
+        circulationID=userID+ISBN
 
         # query1 = f"INSERT INTO userInfo (userID,firstname, middlename, lastname, city, street, postalCode) VALUES ('{userID}','{firstname}', '{middlename}', '{lastname}', '{city}', '{street}', '{postalCode}')"
 
@@ -238,6 +242,56 @@ class Library:
         # Create a label to display messages to the user
         self.message_label = tk.Label(window, text="")
         self.message_label.pack()
+
+
+    def return_book(self):
+        returnDate = datetime.datetime.now()
+        
+        # ts store timestamp of current time
+        ts = returnDate.timestamp()
+
+        # Get the user's information from the input boxes
+        userID=self.return_userID_box.get()
+        ISBN=self.return_ISBN_box.get()
+        circulationID=userID+ISBN
+
+        query1=f"DELETE FROM circulationrecord WHERE circulationID='{circulationID}' "
+        self.cursor.execute(query1)
+        
+        conn.commit()
+
+        # Display a message to the user
+        self.message_label.config(text="Book returned!")
+
+        # Clear the input boxes
+        self.return_userID_box.delete(0, tk.END)
+        self.return_ISBN_box.delete(0, tk.END)
+
+    def return_book_driver(self):
+        window=tk.Tk()
+        window.title('Return book')
+
+        userID_label = tk.Label(window, text="UserID:")
+        userID_label.pack()
+        self.return_userID_box = tk.Entry(window)
+        self.return_userID_box.pack()
+
+        return_ISBN_label = tk.Label(window, text="ISBN:")
+        return_ISBN_label.pack()
+        self.return_ISBN_box = tk.Entry(window)
+        self.return_ISBN_box.pack()
+
+        add_button = tk.Button(window, text="Return book", command=self.return_book)
+        add_button.pack()
+
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
+
 
 
 
@@ -407,6 +461,8 @@ class Library:
 
         # Start the main event loop
         window.mainloop()
+
+        
 
 
 
