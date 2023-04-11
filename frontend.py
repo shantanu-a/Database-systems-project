@@ -60,7 +60,15 @@ class Library:
 
         overdue_button = tk.Button(root, text="Overdue items", command=self.overdue_items_driver)
         overdue_button.pack()
-        
+
+        renew_button = tk.Button(root, text="Renew", command=self.renew_book_driver)
+        renew_button.pack()
+
+        user_list_button = tk.Button(root, text="List of all user", command=self.user_list)
+        user_list_button.pack()
+
+        book_list_button = tk.Button(root, text="List of all books", command=self.book_list)
+        book_list_button.pack()
 
         root.mainloop()
 
@@ -206,7 +214,7 @@ class Library:
         # ts store timestamp of current time
         ts = issueDate.timestamp()
 
-        due_ts=int(ts)-864000
+        due_ts=int(ts)+864000
         # dueDate=datetime.fromtimestamp(due_ts)
 
         returnDate=1.1
@@ -565,11 +573,6 @@ class Library:
 
         self.cursor.execute(f"SELECT firstName,middleName,lastName,title FROM bookinfo,circulationrecord,userinfo where circulationrecord.dueDate<{ts} AND userinfo.userID=circulationrecord.userID AND bookinfo.ISBN=circulationrecord.ISBN")
 
-        # self.message_label = tk.Label(window, text="")
-        # self.message_label.pack()
-
-        # self.message_label.config(text="The names of overdue users and corresponding books are:")
-
         i=0
         for book in self.cursor: 
             for j in range(len(book)):
@@ -580,6 +583,103 @@ class Library:
 
         # Start the main event loop
         window.mainloop()
+
+    def renew_book(self):
+        # Get the user's information from the input boxes
+        ISBN=self.renew_copies_ISBN_box.get()
+        userID=self.renew_userID_box.get()
+
+        circulationID=userID+ISBN
+
+        currentDate = datetime.datetime.now() 
+        ts = currentDate.timestamp()
+
+        self.cursor.execute(f"SELECT dueDate from circulationrecord where circulationid='{circulationID}'")
+
+        dueDate=self.cursor.fetchone()
+
+        new_date=dueDate[0]+864000
+        print(new_date)
+
+        if(dueDate[0]<ts):
+            self.message_label.config(text='Cannot renew, book overdue. Fined')
+            return
+
+        query1 = f"UPDATE circulationrecord set dueDate={new_date} where ISBN='{ISBN}'"
+        self.cursor.execute(query1)
+  
+        conn.commit()
+
+        # Display a message to the user
+        self.message_label.config(text="Book renewed")
+
+        # Clear the input boxes
+        self.renew_copies_ISBN_box.delete(0, tk.END)
+        self.renew_userID_box.delete(0, tk.END)
+
+
+    def renew_book_driver(self):
+        # Create the main window
+        window = tk.Tk()
+        window.title("Renew books")
+
+        userID_label = tk.Label(window, text="UserID:")
+        userID_label.pack()
+        self.renew_userID_box = tk.Entry(window)
+        self.renew_userID_box.pack()
+
+        ISBN_label = tk.Label(window, text="ISBN:")
+        ISBN_label.pack()
+        self.renew_copies_ISBN_box = tk.Entry(window)
+        self.renew_copies_ISBN_box.pack()
+    
+        add_button = tk.Button(window, text="Renew books", command=self.renew_book)
+        add_button.pack()
+
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
+    #create a function to get the user list
+    def user_list(self):
+        window=tk.Tk()
+        window.title('User List')
+
+        self.cursor.execute(f"SELECT firstName,middleName,lastName from userInfo")
+
+        i=0 
+        for book in self.cursor: 
+            for j in range(len(book)):
+                e = Entry(window, width=100, fg='blue') 
+                e.grid(row=i, column=j) 
+                e.insert(END, book[j])
+            i=i+1
+
+        # Start the main event loop
+        window.mainloop()
+
+
+    #create a function to get the book list
+    def book_list(self):
+        window=tk.Tk()
+        window.title('Book List')
+
+        self.cursor.execute(f"SELECT title from bookInfo")
+
+        i=0 
+        for book in self.cursor: 
+            for j in range(len(book)):
+                e = Entry(window, width=100, fg='blue') 
+                e.grid(row=i, column=j) 
+                e.insert(END, book[j])
+            i=i+1
+
+        # Start the main event loop
+        window.mainloop()
+
+
 
 
 library=Library()
