@@ -237,8 +237,8 @@ class User:
         window.mainloop()
 
 
-user=User()
-user.dashboard()
+# user=User()
+# user.dashboard()
 
 
 
@@ -267,15 +267,15 @@ class Book:
         title = self.title_box.get()
         publisher = self.publisher_box.get()
         authorFirstName = self.authorFirstName_box.get()
-        authorMiddletName = self.authorMiddleName_box.get()
-        authorLasttName = self.authorLastName_box.get()
+        authorMiddleName = self.authorMiddleName_box.get()
+        authorLastName = self.authorLastName_box.get()
         numCopy = self.numCopy_box.get()
 
         # Execute the SQL query to insert the new user into the database
-        query1 = f"INSERT INTO bookInfo (ISBN, title, pusblisher, numCopy) VALUES ('{ISBN}','{title}', '{publisher}', '{numCopy}')"
+        query1 = f"INSERT INTO bookInfo (ISBN, title, publisher, numCopy) VALUES ('{ISBN}','{title}', '{publisher}', '{numCopy}')"
         self.cursor.execute(query1)
 
-        query2=f"INSERT INTO bookAuthor(ISBN, authorFirstName, authorMiddletName, authorLastName) VALUES ('{ISBN}', '{authorFirstName}', '{authorMiddletName}', '{authorLasttName}')"
+        query2=f"INSERT INTO bookAuthor(ISBN, authorFirstName, authorMiddleName, authorLastName) VALUES ('{ISBN}', '{authorFirstName}', '{authorMiddleName}', '{authorLastName}')"
         self.cursor.execute(query2)
         conn.commit()
 
@@ -284,9 +284,9 @@ class Book:
         self.title_box.delete(0, tk.END)
         self.publisher_box.delete(0, tk.END)
         self.numCopy_box.delete(0, tk.END)
-        self.authorFirstName.delete(0, tk.END)
-        self.authorMiddletName.delete(0, tk.END)
-        self.authorLastName.delete(0, tk.END)
+        self.authorFirstName_box.delete(0, tk.END)
+        self.authorMiddleName_box.delete(0, tk.END)
+        self.authorLastName_box.delete(0, tk.END)
 
         # Display a message to the user
         self.message_label.config(text="Book added successfully!")
@@ -330,8 +330,8 @@ class Book:
 
         authorLasteName_label = tk.Label(window, text="Author's last name:")
         authorLasteName_label.pack()
-        self.authorLasteName_box = tk.Entry(window)
-        self.authorLasteName_box.pack()
+        self.authorLastName_box = tk.Entry(window)
+        self.authorLastName_box.pack()
 
         # Create the button to add a new user
         add_button = tk.Button(window, text="Add Book", command=self.add_book)
@@ -348,11 +348,13 @@ class Book:
         # Get the user's information from the input boxes
         ISBN=self.delete_ISBN_box.get()
 
+        query2 = f"DELETE FROM bookAuthor where ISBN='{ISBN}'"
+        self.cursor.execute(query2)
+
         query1=f"DELETE FROM bookInfo where ISBN='{ISBN}'"
         self.cursor.execute(query1)
 
-        query2 = f"DELETE FROM bookAuthor where ISBN='{ISBN}'"
-        self.cursor.execute(query2)
+        
 
         
         conn.commit()
