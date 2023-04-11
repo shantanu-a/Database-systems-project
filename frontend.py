@@ -52,48 +52,68 @@ class Library:
         check_due_date_button = tk.Button(root, text="Check due date", command=self.check_due_date_driver)
         check_due_date_button.pack()
 
-
     def admin_dashboard(self):
         root=tk.Tk()
 
-        add_user_button = tk.Button(root, text="Add new user", command=self.add_user_driver)
-        add_user_button.pack()
+        password = self.password_box.get()
 
-        delete_user_button = tk.Button(root, text="Delete existing user", command=self.delete_user_driver)
-        delete_user_button.pack()
+        if(str(password)=='test'):
+            add_user_button = tk.Button(root, text="Add new user", command=self.add_user_driver)
+            add_user_button.pack()
 
-        add_book_button = tk.Button(root, text="Add new book", command=self.add_book_driver)
-        add_book_button.pack()
+            delete_user_button = tk.Button(root, text="Delete existing user", command=self.delete_user_driver)
+            delete_user_button.pack()
 
-        delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
-        delete_book_button.pack()
+            add_book_button = tk.Button(root, text="Add new book", command=self.add_book_driver)
+            add_book_button.pack()
 
-        show_fine_by_all_button = tk.Button(root, text="Total fine paid", command=self.show_fine_by_all_driver)
-        show_fine_by_all_button.pack()
+            delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
+            delete_book_button.pack()
 
-        update_book_copies_button = tk.Button(root, text="Update no. of copies of book", command=self.update_book_copies_driver)
-        update_book_copies_button.pack()
+            show_fine_by_all_button = tk.Button(root, text="Total fine paid", command=self.show_fine_by_all_driver)
+            show_fine_by_all_button.pack()
 
-        checked_out_books_button = tk.Button(root, text="List of checked out books", command=self.checked_out_books_driver)
-        checked_out_books_button.pack()
+            update_book_copies_button = tk.Button(root, text="Update no. of copies of book", command=self.update_book_copies_driver)
+            update_book_copies_button.pack()
 
-        overdue_button = tk.Button(root, text="Overdue items", command=self.overdue_items_driver)
-        overdue_button.pack()
+            checked_out_books_button = tk.Button(root, text="List of checked out books", command=self.checked_out_books_driver)
+            checked_out_books_button.pack()
 
-        user_list_button = tk.Button(root, text="List of all user", command=self.user_list)
-        user_list_button.pack()
+            overdue_button = tk.Button(root, text="Overdue items", command=self.overdue_items_driver)
+            overdue_button.pack()
 
-        admin_fine_button = tk.Button(root, text="Issue fine", command=self.admin_fine_driver)
-        admin_fine_button.pack()
+            user_list_button = tk.Button(root, text="List of all user", command=self.user_list)
+            user_list_button.pack()
 
+            admin_fine_button = tk.Button(root, text="Issue fine", command=self.admin_fine_driver)
+            admin_fine_button.pack()
 
+        else:
+            self.message_label.config("Wrong password")
+
+    def admin_dashboard_driver(self):
+        root=tk.Tk()
+
+        password_label = tk.Label(root, text="Password:")
+        password_label.pack()
+        self.password_box = tk.Entry(root)
+        self.password_box.pack()
+
+        # Create the button to add a new user
+        add_button = tk.Button(root, text="Login",command=self.admin_dashboard)
+        add_button.pack()
+
+        self.message_label = tk.Label(root, text="")
+        self.message_label.pack()
+
+    
     def dashboard(self):
         root = tk.Tk()
 
         user_functionality_button = tk.Button(root, text="Users-Click here", command=self.user_dashboard)
         user_functionality_button.pack()
 
-        admin_functionality_button = tk.Button(root, text="Admin-Click here", command=self.admin_dashboard)
+        admin_functionality_button = tk.Button(root, text="Admin-Click here", command=self.admin_dashboard_driver)
         admin_functionality_button.pack()
 
         root.mainloop()
@@ -104,8 +124,6 @@ class Library:
         self.message_label.pack()
 
         root.mainloop()
-
-
 
     # Create a function to add a new user to the database
     def add_user(self):
