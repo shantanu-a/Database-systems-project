@@ -5,6 +5,7 @@ import datetime
 import getpass
 from tkinter import *
 from datetime import datetime as dt
+import random
  
 
 pw = getpass.getpass(prompt='Enter password to database:')
@@ -81,6 +82,9 @@ class Library:
 
         user_list_button = tk.Button(root, text="List of all user", command=self.user_list)
         user_list_button.pack()
+
+        admin_fine_button = tk.Button(root, text="Issue fine", command=self.admin_fine_driver)
+        admin_fine_button.pack()
 
 
     def dashboard(self):
@@ -423,12 +427,15 @@ class Library:
         authorLastName = self.authorLastName_box.get()
         numCopy = self.numCopy_box.get()
 
-        # Execute the SQL query to insert the new user into the database
+        # Execute the SQL query to insert the new book into the database
         query1 = f"INSERT INTO bookInfo (ISBN, title, publisher, numCopy) VALUES ('{ISBN}','{title}', '{publisher}', '{numCopy}')"
         self.cursor.execute(query1)
 
         query2=f"INSERT INTO bookAuthor(ISBN, authorFirstName, authorMiddleName, authorLastName) VALUES ('{ISBN}', '{authorFirstName}', '{authorMiddleName}', '{authorLastName}')"
         self.cursor.execute(query2)
+
+        query3=f"INSERT INTO finedetails(ISBN,reason,amount) VALUES ('{ISBN}','Damage','{int(100*(random.random()))}')"
+        self.cursor.execute(query3)
         conn.commit()
 
         # Clear the input boxes
@@ -804,8 +811,56 @@ class Library:
         # Start the main event loop
         window.mainloop()
 
+    def admin_fine(self):
+        # Get the user's information from the input boxes
+        ISBN=self.delete_ISBN_box.get()
+        userID=self.fine_user_box.get()
+
+        query1=f"SELECT AMOUNT from finedetails where ISBN={ISBN} and reason='Damage'"
+        self.cursor.execute(query1)
+
+        amount=self.cursor.fetchone()
+        fine_amount=amount[0]
+
+        query2 = f"INSERT INTO finerecord VALUES ('{str(random.random())}','{userID}','Damage','{ISBN}','{fine_amount}')"
+        self.cursor.execute(query2)
+        
+        conn.commit()
+
+        # Display a message to the user
+        self.message_label.config(text="Fine issued!")
+
+        # Clear the input boxes
+        self.delete_ISBN_box.delete(0, tk.END)
+        self.fine_user_box.delete(0, tk.END)
 
 
+    def admin_fine_driver(self):
+        # Create the main window
+        window = tk.Tk()
+        window.title("Admin fine")
+
+        # Create input boxes for adding a new user
+        ISBN_label = tk.Label(window, text="ISBN:")
+        ISBN_label.pack()
+        self.delete_ISBN_box = tk.Entry(window)
+        self.delete_ISBN_box.pack()
+
+        user_label = tk.Label(window, text="userID:")
+        user_label.pack()
+        self.fine_user_box = tk.Entry(window)
+        self.fine_user_box.pack()
+
+        # Create the button to add a new user
+        add_button = tk.Button(window, text="Add fine", command=self.admin_fine)
+        add_button.pack()
+
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
 
 
 library=Library()
