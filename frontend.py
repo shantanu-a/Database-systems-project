@@ -17,7 +17,7 @@ conn = mysql.connector.connect(
 # Create a cursor object to execute SQL queries
 cursor = conn.cursor()
 
-class User:
+class Library:
 
     def __init__(self) -> None:
         # Create a cursor object to execute SQL queries
@@ -34,6 +34,12 @@ class User:
 
         issue_book_button = tk.Button(root, text="Issue a book", command=self.issue_book_driver)
         issue_book_button.pack()
+
+        add_book_button = tk.Button(root, text="Add new book", command=self.add_book_driver)
+        add_book_button.pack()
+
+        delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
+        delete_book_button.pack()
 
         root.mainloop()
 
@@ -274,29 +280,6 @@ class User:
         window.mainloop()
 
 
-# user=User()
-# user.dashboard()
-
-
-
-class Book:
-
-    def __init__(self) -> None:
-        # Create a cursor object to execute SQL queries
-        self.cursor = conn.cursor()
-
-
-    def dashboard(self):
-        root = tk.Tk()
-        add_book_button = tk.Button(root, text="Add new book", command=self.add_book_driver)
-        add_book_button.pack()
-
-        delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
-        delete_book_button.pack()
-
-        root.mainloop()
-
-
     # Create a function to add a new book to the database
     def add_book(self):
         # Get the book's information from the input boxes
@@ -427,9 +410,8 @@ class Book:
 
 
 
-book=Book()
-book.dashboard()
-
+library=Library()
+library.dashboard()
 
 
 # Close the connection to the MySQL database
