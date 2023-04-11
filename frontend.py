@@ -5,7 +5,8 @@ import datetime
 import getpass
  
 
-pw = getpass.getpass(prompt='Enter password to database:')
+# pw = getpass.getpass(prompt='Enter password to database:')
+pw='Sidshan2003!!'
 
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
@@ -192,10 +193,10 @@ class Library:
         ts = issueDate.timestamp()
         print("timestamp:-", ts)
 
-        due_ts=int(ts)+864000
+        due_ts=int(ts)-864000
         # dueDate=datetime.fromtimestamp(due_ts)
 
-        returnDate='.'
+        returnDate=1.1
 
         # Get the user's information from the input boxes
         userID=self.issue_userID_box.get()
@@ -207,8 +208,8 @@ class Library:
         query1=f"INSERT INTO circulationrecord (circulationID,userID,ISBN,dueDate,returnDate) VALUES ('{circulationID}','{userID}','{ISBN}','{due_ts}','{returnDate}')"
         self.cursor.execute(query1)
 
-        query2 = f"INSERT INTO issues(userID,ISBN,issueDate) VALUES ('{userID}','{ISBN}','{issueDate}')"
-        self.cursor.execute(query2)
+        # query2 = f"INSERT INTO issues(userID,ISBN,issueDate) VALUES ('{userID}','{ISBN}','{issueDate}')"
+        # self.cursor.execute(query2)
 
         
         conn.commit()
@@ -256,8 +257,19 @@ class Library:
         ISBN=self.return_ISBN_box.get()
         circulationID=userID+ISBN
 
-        query1=f"DELETE FROM circulationrecord WHERE circulationID='{circulationID}' "
-        self.cursor.execute(query1)
+        self.cursor.execute(f"SELECT dueDate FROM circulationrecord WHERE circulationID='{circulationID}'")
+        dueDate=self.cursor.fetchone()
+
+        print(dueDate[0])
+        print(ts)
+        if(dueDate[0]<ts):
+            fineID=str(dueDate[0])+str(userID)
+            self.cursor.execute(f"INSERT INTO finerecord (fineID,userID,reason,ISBN,amount) VALUES ('{fineID}','{userID}','{'late'}','{ISBN}','{'100'}')")
+            self.message_label.config(text="Late! Fine issued.")
+
+        query2=f"DELETE FROM circulationrecord WHERE circulationID='{circulationID}' "
+        self.cursor.execute(query2)
+
         
         conn.commit()
 
