@@ -27,8 +27,9 @@ class Library:
         self.cursor = conn.cursor()
 
     def user_dashboard(self):
+    
         root=tk.Tk()
-
+  
         issue_book_button = tk.Button(root, text="Issue a book", command=self.issue_book_driver)
         issue_book_button.pack()
 
@@ -50,7 +51,6 @@ class Library:
         check_due_date_button = tk.Button(root, text="Check due date", command=self.check_due_date_driver)
         check_due_date_button.pack()
 
-    
 
     def admin_dashboard(self):
         root=tk.Tk()
@@ -83,8 +83,6 @@ class Library:
         user_list_button.pack()
 
 
-
-
     def dashboard(self):
         root = tk.Tk()
 
@@ -95,6 +93,14 @@ class Library:
         admin_functionality_button.pack()
 
         root.mainloop()
+
+    def error_message(self,message):
+        root=tk.Tk()
+        self.message_label = tk.Label(root, text=message)
+        self.message_label.pack()
+
+        root.mainloop()
+
 
 
     # Create a function to add a new user to the database
@@ -239,23 +245,24 @@ class Library:
         ts = issueDate.timestamp()
 
         due_ts=int(ts)+864000
-        # dueDate=datetime.fromtimestamp(due_ts)
-
-        returnDate=1.1
 
         # Get the user's information from the input boxes
         userID=self.issue_userID_box.get()
         ISBN=self.issue_ISBN.get()
         circulationID=userID+ISBN
 
+        try:
 
-        query1=f"INSERT INTO circulationrecord (circulationID,userID,ISBN,dueDate,issueDate) VALUES ('{circulationID}','{userID}','{ISBN}','{due_ts}','{ts}')"
-        self.cursor.execute(query1)
+            query1=f"INSERT INTO circulationrecord (circulationID,userID,ISBN,dueDate,issueDate) VALUES ('{circulationID}','{userID}','{ISBN}','{due_ts}','{ts}')"
+            self.cursor.execute(query1)
 
-        query2 = f"INSERT INTO issues(userID,ISBN,issueDate,returnDate) VALUES ('{userID}','{ISBN}','{ts}','{0}')"
-        self.cursor.execute(query2)
+            query2 = f"INSERT INTO issues(userID,ISBN,issueDate,returnDate) VALUES ('{userID}','{ISBN}','{ts}','{0}')"
+            self.cursor.execute(query2)
 
-        query3=f"UPDATE bookinfo set numCopy=numCopy-1 where ISBN='{ISBN}'"
+            query3=f"UPDATE bookinfo set numCopy=numCopy-1 where ISBN='{ISBN}'"
+            self.cursor.execute(query3)
+        except  Exception as e:
+            self.error_message(e)
 
         conn.commit()
 
