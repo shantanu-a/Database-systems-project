@@ -2,9 +2,10 @@ import tkinter as tk
 import mysql.connector
 import time
 import datetime
+import getpass
  
 
-pw=input('Enter password to database')
+pw = getpass.getpass(prompt='Enter password to database:')
 
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
