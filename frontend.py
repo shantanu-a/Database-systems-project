@@ -4,6 +4,7 @@ import time
 import datetime
 import getpass
 from tkinter import *
+from datetime import datetime as dt
  
 
 pw = getpass.getpass(prompt='Enter password to database:')
@@ -46,7 +47,10 @@ class Library:
         book_available_button = tk.Button(root, text="Check book availabilty", command=self.book_availability_driver)
         book_available_button.pack()
 
+        check_due_date_button = tk.Button(root, text="Check due date", command=self.check_due_date_driver)
+        check_due_date_button.pack()
 
+    
 
     def admin_dashboard(self):
         root=tk.Tk()
@@ -739,6 +743,54 @@ class Library:
         add_button = tk.Button(window, text="Check", command=self.book_availability)
         add_button.pack()
 
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
+    def check_due_date(self):
+        # Get the user's information from the input boxes
+        userID = self.due_date_userID_box.get()
+        ISBN = self.due_date_ISBN_box.get()
+        circulationID = userID + ISBN
+
+        query1=f"SELECT dueDate FROM circulationRecord where circulationID='{circulationID}'"
+        self.cursor.execute(query1)
+
+        dueDate=self.cursor.fetchone()
+        dt_obj = dt.fromtimestamp(int(dueDate[0]))
+
+        dueDate_window=tk.Tk()
+        dueDate_window.title('Due Date')
+
+        userID_label = tk.Label(dueDate_window, text=f"Due date is: {dt_obj}")
+        userID_label.pack()
+        
+        conn.commit()
+
+        # Clear the input boxes
+        self.due_date_userID_box.delete(0, tk.END)
+        self.due_date_ISBN_box.delete(0, tk.END)
+
+    def check_due_date_driver(self):
+        window=tk.Tk()
+        window.title('Check due date')
+
+        userID_label = tk.Label(window, text="UserID:")
+        userID_label.pack()
+        self.due_date_userID_box = tk.Entry(window)
+        self.due_date_userID_box.pack()
+
+        ISBN_label = tk.Label(window, text="UserID:")
+        ISBN_label.pack()
+        self.due_date_ISBN_box = tk.Entry(window)
+        self.due_date_ISBN_box.pack()
+
+        add_button = tk.Button(window, text="Check Due Date", command=self.check_due_date)
+        add_button.pack()
+
+        # Create a label to display messages to the user
         self.message_label = tk.Label(window, text="")
         self.message_label.pack()
 
