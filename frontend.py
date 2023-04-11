@@ -1,6 +1,5 @@
 import tkinter as tk
 import mysql.connector
-import time
 import datetime
 import getpass
 from tkinter import *
@@ -8,7 +7,7 @@ from datetime import datetime as dt
 import random
  
 
-pw = getpass.getpass(prompt='Enter password to database:')
+pw = input("Enter the password for your database: ")
 
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
@@ -221,11 +220,16 @@ class Library:
         # Get the user's information from the input boxes
         userID=self.delete_userID_box.get()
 
-        query1=f"DELETE FROM usercontact where userID='{userID}'"
-        self.cursor.execute(query1)
+        try:
 
-        query2 = f"DELETE FROM userinfo where userID='{userID}'"
-        self.cursor.execute(query2)
+            query1=f"DELETE FROM usercontact where userID='{userID}'"
+            self.cursor.execute(query1)
+
+            query2 = f"DELETE FROM userinfo where userID='{userID}'"
+            self.cursor.execute(query2)
+
+        except  Exception as e:
+            self.error_message(e)
 
         
         conn.commit()
@@ -336,13 +340,19 @@ class Library:
 
         if(int(dueDate[0])<ts):
             fineID=str(dueDate[0])+str(userID)
-            self.cursor.execute(f"INSERT INTO finerecord (fineID,userID,reason,ISBN,amount) VALUES ('{fineID}','{userID}','{'late'}','{ISBN}','{'100'}')")
-            self.cursor.execute(f"UPDATE issues set returnDate={ts} where ISBN='{ISBN}'and userID='{userID}'and returnDate='0'")
-            self.message_label.config(text="Late! Fine issued.")
+            try:
+                self.cursor.execute(f"INSERT INTO finerecord (fineID,userID,reason,ISBN,amount) VALUES ('{fineID}','{userID}','{'late'}','{ISBN}','{'100'}')")
+                self.cursor.execute(f"UPDATE issues set returnDate={ts} where ISBN='{ISBN}'and userID='{userID}'and returnDate='0'")
+                self.message_label.config(text="Late! Fine issued.")
+            except  Exception as e:
+                self.error_message(e)
 
-        self.cursor.execute(f"UPDATE issues set returnDate={ts} where ISBN='{ISBN}'and userID='{userID}'and returnDate='0'")
-        query2=f"DELETE FROM circulationrecord WHERE circulationID='{circulationID}' "
-        self.cursor.execute(query2)
+        try:
+            self.cursor.execute(f"UPDATE issues set returnDate={ts} where ISBN='{ISBN}'and userID='{userID}'and returnDate='0'")
+            query2=f"DELETE FROM circulationrecord WHERE circulationID='{circulationID}' "
+            self.cursor.execute(query2)
+        except  Exception as e:
+            self.error_message(e)
 
         
         conn.commit()
@@ -814,7 +824,7 @@ class Library:
         self.due_date_userID_box = tk.Entry(window)
         self.due_date_userID_box.pack()
 
-        ISBN_label = tk.Label(window, text="UserID:")
+        ISBN_label = tk.Label(window, text="ISBN:")
         ISBN_label.pack()
         self.due_date_ISBN_box = tk.Entry(window)
         self.due_date_ISBN_box.pack()
