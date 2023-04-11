@@ -46,8 +46,10 @@ class Library:
         delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
         delete_book_button.pack()
 
+        show_fine_button = tk.Button(root, text="Show fine", command=self.show_fine_driver)
+        show_fine_button.pack()
+
         root.mainloop()
-        9780547249649
 
 
     # Create a function to add a new user to the database
@@ -303,6 +305,46 @@ class Library:
 
         # Start the main event loop
         window.mainloop()
+
+    def show_fine(self):
+        # Get the user's information from the input boxes
+        userID=self.fine_userID_box.get()
+
+        query1=f"SELECT SUM(AMOUNT) FROM finerecord where userID='{userID}'"
+        self.cursor.execute(query1)
+
+        fine_amount=self.cursor.fetchone()
+
+        fine_window=tk.Tk()
+        fine_window.title('Fine')
+
+        userID_label = tk.Label(fine_window, text=f"Fine uptil now is: {fine_amount[0]}")
+        userID_label.pack()
+        
+        conn.commit()
+
+        # Clear the input boxes
+        self.fine_userID_box.delete(0, tk.END)
+
+    def show_fine_driver(self):
+        window=tk.Tk()
+        window.title('Show fine')
+
+        userID_label = tk.Label(window, text="UserID:")
+        userID_label.pack()
+        self.fine_userID_box = tk.Entry(window)
+        self.fine_userID_box.pack()
+
+        add_button = tk.Button(window, text="Show fine", command=self.show_fine)
+        add_button.pack()
+
+        # Create a label to display messages to the user
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
 
 
 
