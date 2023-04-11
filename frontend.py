@@ -5,8 +5,7 @@ import datetime
 import getpass
  
 
-# pw = getpass.getpass(prompt='Enter password to database:')
-pw='Sidshan2003!!'
+pw = getpass.getpass(prompt='Enter password to database:')
 
 # Create a connection to your MySQL database
 conn = mysql.connector.connect(
@@ -51,6 +50,11 @@ class Library:
 
         show_fine_by_all_button = tk.Button(root, text="Total fine paid", command=self.show_fine_by_all_driver)
         show_fine_by_all_button.pack()
+
+        update_book_copies_button = tk.Button(root, text="Update no. of copies of book", command=self.update_book_copies_driver)
+        update_book_copies_button.pack()
+
+        
 
         root.mainloop()
 
@@ -454,10 +458,7 @@ class Library:
 
         query1=f"DELETE FROM bookInfo where ISBN='{ISBN}'"
         self.cursor.execute(query1)
-
-        
-
-        
+  
         conn.commit()
 
         # Display a message to the user
@@ -489,7 +490,47 @@ class Library:
         # Start the main event loop
         window.mainloop()
 
-        
+    def update_book_copies(self):
+        # Get the user's information from the input boxes
+        ISBN=self.update_copies_ISBN_box.get()
+        copies=self.num_copies_box.get()
+
+        query1 = f"UPDATE bookinfo set numCopy={copies} where ISBN='{ISBN}'"
+        self.cursor.execute(query1)
+  
+        conn.commit()
+
+        # Display a message to the user
+        self.message_label.config(text=f"Number of copies updated to {copies}")
+
+        # Clear the input boxes
+        self.update_copies_ISBN_box.delete(0, tk.END)
+        self.num_copies_box.delete(0, tk.END)
+
+
+    def update_book_copies_driver(self):
+        # Create the main window
+        window = tk.Tk()
+        window.title("Book copies")
+
+        ISBN_label = tk.Label(window, text="ISBN:")
+        ISBN_label.pack()
+        self.update_copies_ISBN_box = tk.Entry(window)
+        self.update_copies_ISBN_box.pack()
+
+        num_copies_label = tk.Label(window, text="Copies:")
+        num_copies_label.pack()
+        self.num_copies_box = tk.Entry(window)
+        self.num_copies_box.pack()
+
+        add_button = tk.Button(window, text="Update copies", command=self.update_book_copies)
+        add_button.pack()
+
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
 
 
 
@@ -499,5 +540,3 @@ library.dashboard()
 
 # Close the connection to the MySQL database
 conn.close()
-# 9780061120084
-
