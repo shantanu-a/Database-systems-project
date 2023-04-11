@@ -25,14 +25,8 @@ class Library:
         # Create a cursor object to execute SQL queries
         self.cursor = conn.cursor()
 
-
-    def dashboard(self):
-        root = tk.Tk()
-        add_user_button = tk.Button(root, text="Add new user", command=self.add_user_driver)
-        add_user_button.pack()
-
-        delete_user_button = tk.Button(root, text="Delete existing user", command=self.delete_user_driver)
-        delete_user_button.pack()
+    def user_dashboard(self):
+        root=tk.Tk()
 
         issue_book_button = tk.Button(root, text="Issue a book", command=self.issue_book_driver)
         issue_book_button.pack()
@@ -40,14 +34,34 @@ class Library:
         return_book_button = tk.Button(root, text="Return a book", command=self.return_book_driver)
         return_book_button.pack()
 
+        show_fine_button = tk.Button(root, text="User fine", command=self.show_fine_driver)
+        show_fine_button.pack()
+
+        renew_button = tk.Button(root, text="Renew", command=self.renew_book_driver)
+        renew_button.pack()
+
+        book_list_button = tk.Button(root, text="List of all books", command=self.book_list)
+        book_list_button.pack()
+
+        book_available_button = tk.Button(root, text="Check book availabilty", command=self.book_availability_driver)
+        book_available_button.pack()
+
+
+
+    def admin_dashboard(self):
+        root=tk.Tk()
+
+        add_user_button = tk.Button(root, text="Add new user", command=self.add_user_driver)
+        add_user_button.pack()
+
+        delete_user_button = tk.Button(root, text="Delete existing user", command=self.delete_user_driver)
+        delete_user_button.pack()
+
         add_book_button = tk.Button(root, text="Add new book", command=self.add_book_driver)
         add_book_button.pack()
 
         delete_book_button = tk.Button(root, text="Delete existing book", command=self.delete_book_driver)
         delete_book_button.pack()
-
-        show_fine_button = tk.Button(root, text="User fine", command=self.show_fine_driver)
-        show_fine_button.pack()
 
         show_fine_by_all_button = tk.Button(root, text="Total fine paid", command=self.show_fine_by_all_driver)
         show_fine_by_all_button.pack()
@@ -61,14 +75,20 @@ class Library:
         overdue_button = tk.Button(root, text="Overdue items", command=self.overdue_items_driver)
         overdue_button.pack()
 
-        renew_button = tk.Button(root, text="Renew", command=self.renew_book_driver)
-        renew_button.pack()
-
         user_list_button = tk.Button(root, text="List of all user", command=self.user_list)
         user_list_button.pack()
 
-        book_list_button = tk.Button(root, text="List of all books", command=self.book_list)
-        book_list_button.pack()
+
+
+
+    def dashboard(self):
+        root = tk.Tk()
+
+        user_functionality_button = tk.Button(root, text="Users-Click here", command=self.user_dashboard)
+        user_functionality_button.pack()
+
+        admin_functionality_button = tk.Button(root, text="Admin-Click here", command=self.admin_dashboard)
+        admin_functionality_button.pack()
 
         root.mainloop()
 
@@ -679,6 +699,52 @@ class Library:
 
         # Start the main event loop
         window.mainloop()
+
+
+    def book_availability(self):
+        # Get the user's information from the input boxes
+        title=self.title_box.get()
+
+        self.cursor.execute(f"SELECT title,numCopy,ISBN from bookInfo where title='{title}'")
+
+        i=0 
+
+        window=tk.Tk()
+        for book in self.cursor: 
+            for j in range(len(book)):
+                e = Entry(window, width=100, fg='blue') 
+                e.grid(row=i, column=j) 
+                e.insert(END, book[j])
+            i=i+1
+
+        # Start the main event loop
+        window.mainloop()
+
+        conn.commit()
+
+        # Clear the input boxes
+        self.title_box.delete(0, tk.END)
+
+
+    def book_availability_driver(self):
+        # Create the main window
+        window = tk.Tk()
+        window.title("Check book availability")
+
+        title_label = tk.Label(window, text="title")
+        title_label.pack()
+        self.title_box = tk.Entry(window)
+        self.title_box.pack()
+    
+        add_button = tk.Button(window, text="Check", command=self.book_availability)
+        add_button.pack()
+
+        self.message_label = tk.Label(window, text="")
+        self.message_label.pack()
+
+        # Start the main event loop
+        window.mainloop()
+
 
 
 
