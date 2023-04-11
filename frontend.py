@@ -3,6 +3,7 @@ import mysql.connector
 import time
 import datetime
 import getpass
+from tkinter import *
  
 
 pw = getpass.getpass(prompt='Enter password to database:')
@@ -53,6 +54,9 @@ class Library:
 
         update_book_copies_button = tk.Button(root, text="Update no. of copies of book", command=self.update_book_copies_driver)
         update_book_copies_button.pack()
+
+        checked_out_books_button = tk.Button(root, text="List of checked out books", command=self.checked_out_books_driver)
+        checked_out_books_button.pack()
 
         
 
@@ -532,6 +536,22 @@ class Library:
         # Start the main event loop
         window.mainloop()
 
+    def checked_out_books_driver(self):
+        window=tk.Tk()
+        window.title('Checked out books')
+
+        self.cursor.execute("SELECT title FROM bookinfo,circulationrecord where bookinfo.ISBN=circulationrecord.ISBN")
+
+        i=0 
+        for book in self.cursor: 
+            for j in range(len(book)):
+                e = Entry(window, width=100, fg='blue') 
+                e.grid(row=i, column=j) 
+                e.insert(END, book[j])
+            i=i+1
+
+        # Start the main event loop
+        window.mainloop()
 
 
 library=Library()
